@@ -1,7 +1,10 @@
 // eslint-disable-next-line no-unused-vars
+import path from 'path';
 import { getPath, getFilesContent, getDiff } from '../index.js';
 
+const filePath = ('/__fixtures__/file1.json');
+
 test('getPath', () => {
-  expect(getPath('hello')).toEqual('olleh');
-  expect(getPath('')).toEqual('');
+  expect(getPath(filePath)).toEqual(path.resolve(process.cwd(), filePath));
+  expect(getPath('')).toEqual(process.cwd());
 });
