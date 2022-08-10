@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import path from 'path';
-import getPath from '../src/getpath.js';
+import getPath from '../src/getPath.js';
 import { getDiff } from '../index.js';
 
 const filePath = ('/__fixtures__/file1.json');
