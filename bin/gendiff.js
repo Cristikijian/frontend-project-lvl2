@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { getDiff } from '../index.js';
 import parseFile from '../src/parsers.js';
+import formatDiffEntries from '../src/stylish.js';
 
 const program = new Command();
 program
@@ -14,7 +15,8 @@ program
   .action((firstFilePath, secondFilePath) => {
     const firstObject = parseFile(firstFilePath);
     const secondObject = parseFile(secondFilePath);
-    console.log(getDiff(firstObject, secondObject));
+    const diffData = getDiff(firstObject, secondObject);
+    console.log(`{\n${formatDiffEntries(diffData)}\n}`);
   });
 
 program.parse();
