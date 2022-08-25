@@ -10,9 +10,9 @@ const formatPlainObject = (content, level) => {
   return objectContent
     .reduce((result, [key, value]) => {
       if (!_.isObject(value)) {
-        return result.concat(`${spaceSymbol}${key}: ${value}\n`);
+        return result.concat(` ${spaceSymbol}${key}: ${value}\n`);
       }
-      return result.concat(`${spaceSymbol}${key}: {\n${formatPlainObject(value, level + 1)}${spaceSymbol}}\n`);
+      return result.concat(`${spaceSymbol}${key}: {\n ${formatPlainObject(value, level + 1)}${spaceSymbol}}\n`);
     }, '');
 };
 
