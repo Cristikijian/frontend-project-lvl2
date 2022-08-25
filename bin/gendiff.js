@@ -16,7 +16,7 @@ program
     const firstObject = parseFile(firstFilePath);
     const secondObject = parseFile(secondFilePath);
     const diffData = getDiff(firstObject, secondObject);
-    console.log(`{\n${formatDiffEntries(diffData)}\n}`);
+    console.log(formatDiffEntries(diffData));
   });
 
 program.parse();
