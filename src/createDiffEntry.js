@@ -2,11 +2,10 @@ import pkg from 'lodash';
 
 const { isObject } = pkg;
 
-const createDiffEntry = (label, value, type, level) => ({
+const createDiffEntry = (label, value, type) => ({
   label,
   value,
   type,
-  level,
   isObject: isObject(value),
 });
 
