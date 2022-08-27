@@ -1,52 +1,56 @@
 import _ from 'lodash';
-import { ADD_TYPE, DELETE_TYPE, NONE_TYPE } from './constants.js';
+import { NONE_TYPE } from './constants.js';
 
-const getIndent = (depth, type) => {
-  const spaceMultiplier = 4;
-  const spaceNumber = spaceMultiplier * depth;
-  if ((type === ADD_TYPE || type === DELETE_TYPE) && depth !== 1) {
-    return ' '.repeat(spaceNumber + 2);
-  }
-  if (depth === 0) {
-    return ' '.repeat(spaceMultiplier - 2);
-  }
-  return ' '.repeat(spaceNumber + 2);
-};
-
+const SPACE_MULTIPLIER = 4;
 const openingSymbol = '{';
 const closingSymbol = '}';
 
-const formatPlainObject = (content, deepLevel) => {
-  const objectContent = Object.entries(content);
-  return objectContent
-    .reduce((result, [key, value]) => {
-      if (!_.isObject(value)) {
-        return result.concat(`${getIndent(deepLevel, NONE_TYPE)}${key}: ${value}\n`);
-      }
-      return result.concat(`${getIndent(deepLevel, NONE_TYPE)}${key}: ${openingSymbol}\n${formatPlainObject(value, deepLevel + 1)}\n${getIndent(deepLevel, NONE_TYPE)}${closingSymbol}\n`);
-    }, '');
+const getIndent = (depth, isClosing) => {
+  const spaceNumber = SPACE_MULTIPLIER * depth - (isClosing ? 4 : 2);
+  return ' '.repeat(spaceNumber);
 };
 
-const formatDiffEntries = (diffEntries = [], formattingLevel = 0) => {
-  let resultContent = '{\n';
+const formatLabel = (label, depth, type = NONE_TYPE) => `${getIndent(depth)}${type} ${label}: `;
+
+const formatPlainObject = (content, depth) => {
+  let resultContent = `${openingSymbol}\n`;
+
+  resultContent += Object.entries(content)
+    .reduce((result, [key, value]) => {
+      const openingBlock = formatLabel(key, depth);
+
+      if (!_.isObject(value)) {
+        return result.concat(openingBlock, value, '\n');
+      }
+
+      return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
+    }, '');
+
+  return resultContent.concat(`${getIndent(depth, true)}${closingSymbol}`);
+};
+
+const formatDiffEntries = (diffEntries = [], depth = 1) => {
+  let resultContent = `${openingSymbol}\n`;
 
   resultContent += diffEntries
     .reduce((result, {
       label, value, type, isObject,
     }) => {
-      const openingBlock = `${getIndent(formattingLevel, type)}${type} ${label}: `;
-      // const closingBlock = `${spaceSymbol}  ${closingSymbol}\n`;
+      const openingBlock = formatLabel(label, depth, type);
 
+      // or modified object (diff entries recursion)
       if (Array.isArray(value)) {
-        // eslint-disable-next-line max-len
-        return result.concat(openingBlock, formatDiffEntries(value, formattingLevel + 1), '\n');
+        return result.concat(openingBlock, formatDiffEntries(value, depth + 1), '\n');
+      // or added/removed object (plain object recursion)
       }
       if (isObject) {
-        return result.concat(openingBlock, `${openingSymbol}\n`, formatPlainObject(value, formattingLevel + 1), `${getIndent(formattingLevel, type)}${closingSymbol}\n`);
+        return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
       }
-
-      return result.concat(`${openingBlock}${value}\n`);
+      // simple value
+      return result.concat(openingBlock, value, '\n');
     }, '');
-  return resultContent.concat(`${formattingLevel === 0 ? '' : getIndent(formattingLevel, NONE_TYPE)}${closingSymbol}`);
+
+  return resultContent.concat(`${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`);
 };
+
 export default formatDiffEntries;
