@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { getDiff } from '../index.js';
 import parseFile from '../src/parsers.js';
+import plainFormatter from '../src/plain.js';
 import formatDiffEntries from '../src/stylish.js';
 
 const program = new Command();
@@ -12,11 +13,15 @@ program
   .option('-f, --format <type>', 'output format', 'stylish')
   .argument('<filePath1>')
   .argument('<filePath2>')
-  .action((firstFilePath, secondFilePath) => {
+  .action((firstFilePath, secondFilePath, options) => {
     const firstObject = parseFile(firstFilePath);
     const secondObject = parseFile(secondFilePath);
     const diffData = getDiff(firstObject, secondObject);
-    console.log(formatDiffEntries(diffData));
+    if (options.format === 'plain') {
+      console.log(plainFormatter(diffData));
+    } else {
+      console.log(formatDiffEntries(diffData));
+    }
   });
 
 program.parse();
