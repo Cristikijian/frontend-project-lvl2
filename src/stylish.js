@@ -1,5 +1,7 @@
 import _ from 'lodash';
-import { NONE_TYPE } from './constants.js';
+import {
+  ADD_TYPE, DELETE_TYPE, UPDATED_TYPE,
+} from './constants.js';
 
 const SPACE_MULTIPLIER = 4;
 const openingSymbol = '{';
@@ -10,7 +12,17 @@ const getIndent = (depth, isClosing) => {
   return ' '.repeat(spaceNumber);
 };
 
-const formatLabel = (label, depth, type = NONE_TYPE) => `${getIndent(depth)}${type} ${label}: `;
+const checkTypeSymbol = (type) => {
+  switch (type) {
+    case ADD_TYPE:
+      return '+';
+    case DELETE_TYPE:
+      return '-';
+    default:
+      return ' ';
+  }
+};
+const formatLabel = (label, depth, type = ' ') => `${getIndent(depth)}${checkTypeSymbol(type)} ${label}: `;
 
 const formatPlainObject = (content, depth) => {
   let resultContent = `${openingSymbol}\n`;
@@ -34,7 +46,7 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
 
   resultContent += diffEntries
     .reduce((result, {
-      label, value, type, isObject,
+      label, value, type, isObject, oldValue,
     }) => {
       const openingBlock = formatLabel(label, depth, type);
 
@@ -47,6 +59,16 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
         return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
       }
       // simple value
+      if (type === UPDATED_TYPE) {
+        return result.concat(
+          formatLabel(label, depth, DELETE_TYPE),
+          _.isObject(oldValue) ? formatPlainObject(oldValue, depth + 1) : oldValue,
+          '\n',
+          formatLabel(label, depth, ADD_TYPE),
+          _.isObject(value) ? formatPlainObject(value, depth + 1) : value,
+          '\n',
+        );
+      }
       return result.concat(openingBlock, value, '\n');
     }, '');
 

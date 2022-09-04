@@ -1,5 +1,7 @@
 import _ from 'lodash';
-import { ADD_TYPE, DELETE_TYPE, NONE_TYPE } from './src/constants.js';
+import {
+  ADD_TYPE, DELETE_TYPE, NONE_TYPE, UPDATED_TYPE,
+} from './src/constants.js';
 import createDiffEntry from './src/createDiffEntry.js';
 
 const getDiff = (obj1, obj2) => {
@@ -18,8 +20,8 @@ const getDiff = (obj1, obj2) => {
       }
 
       if (Object.hasOwn(obj2, key) && oldValue !== newValue) {
-        changes.push(createDiffEntry(key, oldValue, DELETE_TYPE));
-        changes.push(createDiffEntry(key, newValue, ADD_TYPE));
+        changes.push(createDiffEntry(key, newValue, UPDATED_TYPE, oldValue));
+        // changes.push(createDiffEntry(key, newValue, UPDATED_TYPE));
       }
 
       if (Object.hasOwn(obj2, key) && oldValue === newValue) {
