@@ -12,6 +12,7 @@ const secondObject = parseFile('./__fixtures__/file4.json');
 const filePath = '/__fixtures__/file1.json';
 const diffResultEtalon = readFileSync(path.resolve('./__fixtures__/diffResult.txt'), 'utf-8');
 const plainResultEtalon = readFileSync(path.resolve('./__fixtures__/plainResult.txt'), 'utf-8');
+const jsonResultEtalon = readFileSync(path.resolve('./__fixtures__/jsonResult.txt'), 'utf-8');
 
 test('getPath', () => {
   expect(getPath(filePath)).toEqual(path.resolve(process.cwd(), filePath));
@@ -24,4 +25,8 @@ test('formatDiffEntries', () => {
 
 test('plainFormatter', () => {
   expect(plainFormatter(getDiff(firstObject, secondObject))).toEqual(plainResultEtalon);
+});
+
+test('jsonFormatter', () => {
+  expect(JSON.stringify((getDiff(firstObject, secondObject)), null, 2)).toEqual(jsonResultEtalon);
 });

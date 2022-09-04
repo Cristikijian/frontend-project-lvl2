@@ -19,6 +19,8 @@ program
     const diffData = getDiff(firstObject, secondObject);
     if (options.format === 'plain') {
       console.log(plainFormatter(diffData));
+    } else if (options.format === 'json') {
+      console.log(JSON.stringify(diffData, null, 2));
     } else {
       console.log(formatDiffEntries(diffData));
     }

@@ -1,0 +1,134 @@
+[
+  {
+    "label": "common",
+    "value": [
+      {
+        "label": "follow",
+        "value": false,
+        "type": "added",
+        "isObject": false
+      },
+      {
+        "label": "setting1",
+        "value": "Value 1",
+        "type": "none",
+        "isObject": false
+      },
+      {
+        "label": "setting2",
+        "value": 200,
+        "type": "deleted",
+        "isObject": false
+      },
+      {
+        "label": "setting3",
+        "value": null,
+        "type": "updated",
+        "isObject": false,
+        "oldValue": true
+      },
+      {
+        "label": "setting4",
+        "value": "blah blah",
+        "type": "added",
+        "isObject": false
+      },
+      {
+        "label": "setting5",
+        "value": {
+          "key5": "value5"
+        },
+        "type": "added",
+        "isObject": true
+      },
+      {
+        "label": "setting6",
+        "value": [
+          {
+            "label": "doge",
+            "value": [
+              {
+                "label": "wow",
+                "value": "so much",
+                "type": "updated",
+                "isObject": false,
+                "oldValue": ""
+              }
+            ],
+            "type": "none",
+            "isObject": true
+          },
+          {
+            "label": "key",
+            "value": "value",
+            "type": "none",
+            "isObject": false
+          },
+          {
+            "label": "ops",
+            "value": "vops",
+            "type": "added",
+            "isObject": false
+          }
+        ],
+        "type": "none",
+        "isObject": true
+      }
+    ],
+    "type": "none",
+    "isObject": true
+  },
+  {
+    "label": "group1",
+    "value": [
+      {
+        "label": "baz",
+        "value": "bars",
+        "type": "updated",
+        "isObject": false,
+        "oldValue": "bas"
+      },
+      {
+        "label": "foo",
+        "value": "bar",
+        "type": "none",
+        "isObject": false
+      },
+      {
+        "label": "nest",
+        "value": "str",
+        "type": "updated",
+        "isObject": false,
+        "oldValue": {
+          "key": "value"
+        }
+      }
+    ],
+    "type": "none",
+    "isObject": true
+  },
+  {
+    "label": "group2",
+    "value": {
+      "abc": 12345,
+      "deep": {
+        "id": 45
+      }
+    },
+    "type": "deleted",
+    "isObject": true
+  },
+  {
+    "label": "group3",
+    "value": {
+      "deep": {
+        "id": {
+          "number": 45
+        }
+      },
+      "fee": 100500
+    },
+    "type": "added",
+    "isObject": true
+  }
+]
