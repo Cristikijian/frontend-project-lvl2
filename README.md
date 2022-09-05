@@ -5,4 +5,8 @@
 
 ## Demonstration videos:
 
-<a href="https://asciinema.org/connect/f047813d-44cd-4d12-a0bd-8bfa42f91b3b">gendiff JSON</a>
+<a href="https://asciinema.org/a/kBqC7zTEeO52wNCw9y3NLxKYU">gendiff JSON plain</a>
+<a href="https://asciinema.org/a/Hd3OMfXh8xoS3sJMH7xf5433J">gendiff YML</a>
+<a href="https://asciinema.org/a/03VQREhVnP9ZBqvWBphFVvaTC">gendiff JSON slylish formatter</a>
+<a href="https://asciinema.org/a/jmp1F7LPYlSBg4OlG0v39pH6A">gendiff JSON plain formatter</a>
+<a href="https://asciinema.org/a/Kewlneg92WVDStbRN82SwZHuR">gendiff JSON json formatter</a>
