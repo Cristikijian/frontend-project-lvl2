@@ -50,15 +50,6 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
     }) => {
       const openingBlock = formatLabel(label, depth, type);
 
-      // or modified object (diff entries recursion)
-      if (Array.isArray(value)) {
-        return result.concat(openingBlock, formatDiffEntries(value, depth + 1), '\n');
-      // or added/removed object (plain object recursion)
-      }
-      if (isObject) {
-        return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
-      }
-      // simple value
       if (type === UPDATED_TYPE) {
         return result.concat(
           formatLabel(label, depth, DELETE_TYPE),
@@ -68,6 +59,15 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
           _.isObject(value) ? formatPlainObject(value, depth + 1) : value,
           '\n',
         );
+      }
+
+      // or modified object (diff entries recursion)
+      if (Array.isArray(value)) {
+        return result.concat(openingBlock, formatDiffEntries(value, depth + 1), '\n');
+      // or added/removed object (plain object recursion)
+      }
+      if (isObject) {
+        return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
       }
       return result.concat(openingBlock, value, '\n');
     }, '');
