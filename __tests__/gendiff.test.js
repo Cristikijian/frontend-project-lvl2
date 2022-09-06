@@ -9,7 +9,7 @@ import plainFormatter from '../src/plain.js';
 
 const firstObject = parseFile('./__fixtures__/file3.json');
 const secondObject = parseFile('./__fixtures__/file4.json');
-const filePath = '/__fixtures__/file1.json';
+const filePath = '../__fixtures__/file1.json';
 const diffResultEtalon = readFileSync(path.resolve('./__fixtures__/diffResult.txt'), 'utf-8');
 const plainResultEtalon = readFileSync(path.resolve('./__fixtures__/plainResult.txt'), 'utf-8');
 const jsonResultEtalon = readFileSync(path.resolve('./__fixtures__/jsonResult.txt'), 'utf-8');
