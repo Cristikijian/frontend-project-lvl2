@@ -11,7 +11,7 @@ program
   .argument('<filePath1>')
   .argument('<filePath2>')
   .action((firstFilePath, secondFilePath, options) => {
-    console.log(genDiff(firstFilePath, secondFilePath, options));
+    console.log(genDiff(firstFilePath, secondFilePath, options.format));
   });
 
 program.parse();
