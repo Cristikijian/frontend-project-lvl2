@@ -3,7 +3,7 @@ import path from 'path';
 import { readFileSync } from 'fs';
 import parseFile from '../src/parsers.js';
 import getPath from '../src/getPath.js';
-import { getDiff } from '../index.js';
+import { getDiff } from '../src/index.js';
 import formatDiffEntries from '../src/stylish.js';
 import plainFormatter from '../src/plain.js';
 

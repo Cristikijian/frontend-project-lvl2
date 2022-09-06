@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import {
   ADD_TYPE, DELETE_TYPE, NONE_TYPE, UPDATED_TYPE,
-} from './src/constants.js';
-import createDiffEntry from './src/createDiffEntry.js';
+} from './constants.js';
+import createDiffEntry from './createDiffEntry.js';
 
 const getDiff = (obj1, obj2) => {
   const result = Object.entries(obj1)
