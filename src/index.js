@@ -8,12 +8,11 @@ const genDiff = (firstFilePath, secondFilePath, options = {}) => {
   const secondObject = parseFile(secondFilePath);
   const diffData = compareObjects(firstObject, secondObject);
   if (options.format === 'plain') {
-    console.log(plainFormatter(diffData));
-  } else if (options.format === 'json') {
-    console.log(JSON.stringify(diffData, null, 2));
-  } else {
-    console.log(formatDiffEntries(diffData));
+    return plainFormatter(diffData);
+  } if (options.format === 'json') {
+    return JSON.stringify(diffData, null, 2);
   }
+  return formatDiffEntries(diffData);
 };
 
 export default genDiff;

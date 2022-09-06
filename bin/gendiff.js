@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import getDiff from '../src/index.js';
-import parseFile from '../src/parsers.js';
-import plainFormatter from '../src/plain.js';
-import formatDiffEntries from '../src/stylish.js';
+import genDiff from '../src/index.js';
 
 const program = new Command();
 program
@@ -14,16 +11,7 @@ program
   .argument('<filePath1>')
   .argument('<filePath2>')
   .action((firstFilePath, secondFilePath, options) => {
-    const firstObject = parseFile(firstFilePath);
-    const secondObject = parseFile(secondFilePath);
-    const diffData = getDiff(firstObject, secondObject);
-    if (options.format === 'plain') {
-      console.log(plainFormatter(diffData));
-    } else if (options.format === 'json') {
-      console.log(JSON.stringify(diffData, null, 2));
-    } else {
-      console.log(formatDiffEntries(diffData));
-    }
+    console.log(genDiff(firstFilePath, secondFilePath, options));
   });
 
 program.parse();
