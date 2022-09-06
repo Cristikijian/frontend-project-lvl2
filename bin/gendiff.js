@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { getDiff } from '../index.js';
+import getDiff from '../src/index.js';
 import parseFile from '../src/parsers.js';
 import plainFormatter from '../src/plain.js';
 import formatDiffEntries from '../src/stylish.js';
