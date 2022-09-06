@@ -3,7 +3,7 @@ import path from 'path';
 import { readFileSync } from 'fs';
 import parseFile from '../src/parsers.js';
 import getPath from '../src/getPath.js';
-import getDiff from '../src/index.js';
+import compareObjects from '../src/compareObjects.js';
 import formatDiffEntries from '../src/stylish.js';
 import plainFormatter from '../src/plain.js';
 
@@ -20,13 +20,14 @@ test('getPath', () => {
 });
 
 test('formatDiffEntries', () => {
-  expect(formatDiffEntries(getDiff(firstObject, secondObject))).toEqual(diffResultEtalon);
+  expect(formatDiffEntries(compareObjects(firstObject, secondObject))).toEqual(diffResultEtalon);
 });
 
 test('plainFormatter', () => {
-  expect(plainFormatter(getDiff(firstObject, secondObject))).toEqual(plainResultEtalon);
+  expect(plainFormatter(compareObjects(firstObject, secondObject))).toEqual(plainResultEtalon);
 });
 
 test('jsonFormatter', () => {
-  expect(JSON.stringify((getDiff(firstObject, secondObject)), null, 2)).toEqual(jsonResultEtalon);
+  expect(JSON.stringify((compareObjects(firstObject, secondObject)), null, 2))
+    .toEqual(jsonResultEtalon);
 });
