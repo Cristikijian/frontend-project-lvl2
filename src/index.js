@@ -50,5 +50,4 @@ const getDiff = (obj1, obj2) => {
     });
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export { getDiff };
+export default getDiff;
