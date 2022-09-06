@@ -11,21 +11,20 @@ const compareObjects = (obj1, obj2) => {
 
       if (_.isObject(oldValue) && _.isObject(newValue)) {
         const objectsDiffResult = compareObjects(oldValue, newValue);
-        changes.push(createDiffEntry(key, objectsDiffResult, NONE_TYPE));
-        return changes;
+        return [...changes, createDiffEntry(key, objectsDiffResult, NONE_TYPE)];
       }
 
       if (!Object.hasOwn(obj2, key)) {
-        changes.push(createDiffEntry(key, oldValue, DELETE_TYPE));
+        return [...changes, createDiffEntry(key, oldValue, DELETE_TYPE)];
       }
 
       if (Object.hasOwn(obj2, key) && oldValue !== newValue) {
-        changes.push(createDiffEntry(key, newValue, UPDATED_TYPE, oldValue));
+        return [...changes, createDiffEntry(key, newValue, UPDATED_TYPE, oldValue)];
         // changes.push(createDiffEntry(key, newValue, UPDATED_TYPE));
       }
 
       if (Object.hasOwn(obj2, key) && oldValue === newValue) {
-        changes.push(createDiffEntry(key, oldValue, NONE_TYPE));
+        return [...changes, createDiffEntry(key, oldValue, NONE_TYPE)];
       }
 
       return changes;
