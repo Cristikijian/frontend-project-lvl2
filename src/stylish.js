@@ -25,9 +25,7 @@ const checkTypeSymbol = (type) => {
 const formatLabel = (label, depth, type = ' ') => `${getIndent(depth)}${checkTypeSymbol(type)} ${label}: `;
 
 const formatPlainObject = (content, depth) => {
-  let resultContent = `${openingSymbol}\n`;
-
-  resultContent += Object.entries(content)
+  const resultContent = Object.entries(content)
     .reduce((result, [key, value]) => {
       const openingBlock = formatLabel(key, depth);
 
@@ -38,13 +36,11 @@ const formatPlainObject = (content, depth) => {
       return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
     }, '');
 
-  return resultContent.concat(`${getIndent(depth, true)}${closingSymbol}`);
+  return [`${openingSymbol}\n`, resultContent, `${getIndent(depth, true)}${closingSymbol}`].join('');
 };
 
 const formatDiffEntries = (diffEntries = [], depth = 1) => {
-  let resultContent = `${openingSymbol}\n`;
-
-  resultContent += diffEntries
+  const resultContent = diffEntries
     .reduce((result, {
       label, value, type, isObject, oldValue,
     }) => {
@@ -72,7 +68,7 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
       return result.concat(openingBlock, value, '\n');
     }, '');
 
-  return resultContent.concat(`${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`);
+  return [`${openingSymbol}\n`, resultContent, `${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`].join('');
 };
 
 export default formatDiffEntries;

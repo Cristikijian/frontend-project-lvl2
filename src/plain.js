@@ -5,10 +5,8 @@ import {
 } from './constants.js';
 
 const formatValue = (value) => {
-  let checkComplex = '';
   if (Array.isArray(value) || _.isObject(value)) {
-    checkComplex = '[complex value]';
-    return checkComplex;
+    return '[complex value]';
   }
   if (typeof value === 'string') {
     return `'${value}'`;
