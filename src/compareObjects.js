@@ -30,23 +30,13 @@ const compareObjects = (obj1, obj2) => {
       return changes;
     }, []);
 
-  return Object.entries(obj2)
+  const sortedResult = Object.entries(obj2)
     .filter(([key]) => !Object.hasOwn(obj1, key))
     .reduce(
-      (changes, [key, newValue]) => {
-        changes.push(createDiffEntry(key, newValue, ADD_TYPE));
-        return changes;
-      },
+      (changes, [key, newValue]) => [...changes, createDiffEntry(key, newValue, ADD_TYPE)],
       result,
-    ).sort((a, b) => {
-      if (a.label > b.label) {
-        return 1;
-      }
-      if (a.label < b.label) {
-        return -1;
-      }
-      return 0;
-    });
+    );
+  return _.sortBy(sortedResult, (diffEntry) => diffEntry.label);
 };
 
 export default compareObjects;
