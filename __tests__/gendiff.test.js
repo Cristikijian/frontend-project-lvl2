@@ -1,14 +1,18 @@
 // eslint-disable-next-line no-unused-vars
-import path from 'path';
-import { readFileSync } from 'fs';
+import { test } from '@jest/globals';
+import { readFileSync } from 'node:fs';
 import genDiff from '../src/index.js';
 
-const diffResultEtalon = readFileSync(path.resolve('./__fixtures__/stylishResult.txt'), 'utf-8');
-const plainResultEtalon = readFileSync(path.resolve('./__fixtures__/plainResult.txt'), 'utf-8');
-const jsonResultEtalon = readFileSync(path.resolve('./__fixtures__/jsonResult.txt'), 'utf-8');
+const getFixture = (filename) => readFileSync(new URL(`../__fixtures__/${filename}`, import.meta.url), 'utf-8');
 
-test('genDiff', () => {
-  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json')).toEqual(diffResultEtalon);
-  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json', 'plain')).toEqual(plainResultEtalon);
-  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json', 'json')).toEqual(jsonResultEtalon);
+test('genDiff stylish', () => {
+  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json')).toEqual(getFixture('stylishResult.txt'));
+});
+
+test('gendiff plain', () => {
+  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json', 'plain')).toEqual(getFixture('plainResult.txt'));
+});
+
+test('gendif json', () => {
+  expect(genDiff('./__fixtures__/file1.yaml', './__fixtures__/file2.json', 'json')).toEqual(getFixture('jsonResult.txt'));
 });
