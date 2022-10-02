@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   ADD_TYPE, DELETE_TYPE, UPDATED_TYPE,
-} from './constants.js';
+} from '../constants.js';
 
 const SPACE_MULTIPLIER = 4;
 const openingSymbol = '{';

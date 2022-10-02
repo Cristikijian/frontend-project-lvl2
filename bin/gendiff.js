@@ -10,8 +10,8 @@ program
   .option('-f, --format <type>', 'output format', 'stylish')
   .argument('<filePath1>')
   .argument('<filePath2>')
-  .action((firstFilePath, secondFilePath, options) => {
-    console.log(genDiff(firstFilePath, secondFilePath, options.format));
+  .action((filePath1, filePath2, options) => {
+    console.log(genDiff(filePath1, filePath2, options.format));
   });
 
 program.parse();

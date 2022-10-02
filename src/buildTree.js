@@ -4,13 +4,13 @@ import {
 } from './constants.js';
 import createDiffEntry from './createDiffEntry.js';
 
-const compareObjects = (obj1, obj2) => {
+const buildTree = (obj1, obj2) => {
   const result = Object.entries(obj1)
     .reduce((changes, [key, oldValue]) => {
       const newValue = obj2[key];
 
       if (_.isObject(oldValue) && _.isObject(newValue)) {
-        const objectsDiffResult = compareObjects(oldValue, newValue);
+        const objectsDiffResult = buildTree(oldValue, newValue);
         return [...changes, createDiffEntry(key, objectsDiffResult, NONE_TYPE)];
       }
 
@@ -39,4 +39,4 @@ const compareObjects = (obj1, obj2) => {
   return _.sortBy(sortedResult, (diffEntry) => diffEntry.label);
 };
 
-export default compareObjects;
+export default buildTree;

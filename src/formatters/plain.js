@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import {
   ADD_TYPE, DELETE_TYPE, UPDATED_TYPE,
-} from './constants.js';
+} from '../constants.js';
 
 const formatValue = (value) => {
   if (Array.isArray(value) || _.isObject(value)) {
