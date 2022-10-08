@@ -1,15 +1,12 @@
 import yaml from 'js-yaml';
-import path from 'path';
-import getData from './getData.js';
 
-const parseFile = (file) => {
-  const content = getData(file);
-  if (path.extname(file) === '.json') {
-    return JSON.parse(content);
+const parseFile = (data, format) => {
+  if (format === '.json') {
+    return JSON.parse(data);
   }
 
-  if (path.extname(file) === '.yaml' || path.extname(file) === '.yml') {
-    return yaml.load(content);
+  if (format === '.yaml' || format === '.yml') {
+    return yaml.load(data);
   }
   return false;
 };
