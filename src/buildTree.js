@@ -2,7 +2,14 @@ import _ from 'lodash';
 import {
   ADD_TYPE, DELETE_TYPE, NONE_TYPE, UPDATED_TYPE,
 } from './constants.js';
-import createDiffEntry from './createDiffEntry.js';
+
+const createDiffEntry = (label, value, type, oldValue) => ({
+  label,
+  value,
+  type,
+  isObject: _.isObject(value),
+  oldValue,
+});
 
 const buildTree = (obj1, obj2) => {
   const result = Object.entries(obj1)

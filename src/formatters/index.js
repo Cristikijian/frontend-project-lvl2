@@ -1,8 +1,8 @@
 import plainFormatter from './plain.js';
 import formatDiffEntries from './stylish.js';
 
-const formatData = (format, data) => {
-  switch (format) {
+const format = (output, data) => {
+  switch (output) {
     case 'plain':
       return plainFormatter(data);
     case 'json':
@@ -11,4 +11,4 @@ const formatData = (format, data) => {
       return formatDiffEntries(data);
   }
 };
-export default formatData;
+export default format;

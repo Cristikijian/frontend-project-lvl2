@@ -16,47 +16,47 @@ const plainResult = readFixture('plainResult.txt');
 const jsonResult = readFixture('jsonResult.txt');
 
 describe('should be work with yml', () => {
-  const file1 = getFixturePath('file1.yaml');
-  const file2 = getFixturePath('file2.yml');
+  const filePath1 = getFixturePath('file1.yaml');
+  const filePath2 = getFixturePath('file2.yml');
 
   test('without formatter', () => {
-    expect(genDiff(file1, file2)).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2)).toEqual(stylishResult);
   });
 
   test('stylish formatter', () => {
-    expect(genDiff(file1, file2, 'stylish')).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2, 'stylish')).toEqual(stylishResult);
   });
 
   test('plain formatter', () => {
-    expect(genDiff(file1, file2, 'plain')).toEqual(plainResult);
+    expect(genDiff(filePath1, filePath2, 'plain')).toEqual(plainResult);
   });
 
   test('json formatter', () => {
-    expect(genDiff(file1, file2, 'json')).toEqual(jsonResult);
+    expect(genDiff(filePath1, filePath2, 'json')).toEqual(jsonResult);
   });
 });
 
 describe('should be work with json', () => {
-  const file1 = getFixturePath('file1.json');
-  const file2 = getFixturePath('file2.json');
+  const filePath1 = getFixturePath('file1.json');
+  const filePath2 = getFixturePath('file2.json');
 
   test('without formatter', () => {
-    expect(genDiff(file1, file2)).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2)).toEqual(stylishResult);
   });
 
   test('stylish formatter', () => {
-    expect(genDiff(file1, file2, 'stylish')).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2, 'stylish')).toEqual(stylishResult);
   });
 
   test('plain formatter', () => {
-    expect(genDiff(file1, file2, 'plain')).toEqual(plainResult);
+    expect(genDiff(filePath1, filePath2, 'plain')).toEqual(plainResult);
   });
 
   test('json formatter', () => {
-    expect(genDiff(file1, file2, 'json')).toEqual(jsonResult);
+    expect(genDiff(filePath1, filePath2, 'json')).toEqual(jsonResult);
   });
 
   test('json error', () => {
-    expect(() => genDiff(getFixturePath('error.json'), file1)).toThrow(SyntaxError);
+    expect(() => genDiff(getFixturePath('error.json'), filePath1)).toThrow(SyntaxError);
   });
 });
