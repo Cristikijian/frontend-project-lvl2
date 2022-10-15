@@ -4,26 +4,15 @@ import parse from './parsers.js';
 import buildTree from './buildTree.js';
 import format from './formatters/index.js';
 
-const getPath = (filePath) => {
-  if (path.isAbsolute(filePath)) {
-    return filePath;
-  }
-  return path.resolve(process.cwd(), filePath);
+const buildPath = (filePath) => path.resolve(process.cwd(), filePath);
+const extractFormat = (filePath) => path.extname(filePath);
+
+const getData = (filePath) => parse(readFileSync(filePath, 'utf-8'), extractFormat(filePath));
+
+const genDiff = (filePath1, filePath2, output) => {
+  const data1 = getData(buildPath(filePath1));
+  const data2 = getData(buildPath(filePath2));
+  const tree = buildTree(data1, data2);
+  return format(output, tree);
 };
-
-const getFormat = (filePath) => path.extname(filePath);
-
-const getData = (filePath) => parse(readFileSync(filePath, 'utf-8'), getFormat(filePath));
-
-const genDiff = (filePath1, filePath2, output) => format(
-  output,
-  buildTree(
-    getData(
-      getPath(filePath1),
-    ),
-    getData(
-      getPath(filePath2),
-    ),
-  ),
-);
 export default genDiff;

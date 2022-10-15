@@ -11,39 +11,37 @@ const createDiffEntry = (label, value, type, oldValue) => ({
   oldValue,
 });
 
-const buildTree = (obj1, obj2) => {
-  const result = Object.entries(obj1)
-    .reduce((changes, [key, oldValue]) => {
-      const newValue = obj2[key];
+const buildTree = (data1, data2) => {
+  const result = _.uniq([...Object.keys(data1), ...Object.keys(data2)])
+    .reduce((changes, key) => {
+      const oldValue = data1[key];
+      const newValue = data2[key];
+      const keyExistsIn1 = Object.hasOwn(data1, key);
+      const keyExistsIn2 = Object.hasOwn(data2, key);
 
       if (_.isObject(oldValue) && _.isObject(newValue)) {
         const objectsDiffResult = buildTree(oldValue, newValue);
         return [...changes, createDiffEntry(key, objectsDiffResult, NONE_TYPE)];
       }
 
-      if (!Object.hasOwn(obj2, key)) {
+      if (keyExistsIn1 && !keyExistsIn2) {
         return [...changes, createDiffEntry(key, oldValue, DELETE_TYPE)];
       }
 
-      if (Object.hasOwn(obj2, key) && oldValue !== newValue) {
-        return [...changes, createDiffEntry(key, newValue, UPDATED_TYPE, oldValue)];
-        // changes.push(createDiffEntry(key, newValue, UPDATED_TYPE));
+      if (!keyExistsIn1 && keyExistsIn2) {
+        return [...changes, createDiffEntry(key, newValue, ADD_TYPE)];
       }
 
-      if (Object.hasOwn(obj2, key) && oldValue === newValue) {
-        return [...changes, createDiffEntry(key, oldValue, NONE_TYPE)];
+      if (keyExistsIn1 && keyExistsIn2) {
+        return oldValue === newValue
+          ? [...changes, createDiffEntry(key, oldValue, NONE_TYPE)]
+          : [...changes, createDiffEntry(key, newValue, UPDATED_TYPE, oldValue)];
       }
 
       return changes;
     }, []);
 
-  const sortedResult = Object.entries(obj2)
-    .filter(([key]) => !Object.hasOwn(obj1, key))
-    .reduce(
-      (changes, [key, newValue]) => [...changes, createDiffEntry(key, newValue, ADD_TYPE)],
-      result,
-    );
-  return _.sortBy(sortedResult, (diffEntry) => diffEntry.label);
+  return _.sortBy(result, (diffEntry) => diffEntry.label);
 };
 
 export default buildTree;
