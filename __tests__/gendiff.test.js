@@ -15,48 +15,24 @@ const stylishResult = readFixture('stylishResult.txt');
 const plainResult = readFixture('plainResult.txt');
 const jsonResult = readFixture('jsonResult.txt');
 
-describe('should be work with yml', () => {
-  const filePath1 = getFixturePath('file1.yaml');
-  const filePath2 = getFixturePath('file2.yml');
-
-  test('without formatter', () => {
+describe('genDiff test', () => {
+  it('should be work with yml', () => {
+    const filePath1 = getFixturePath('file1.yaml');
+    const filePath2 = getFixturePath('file2.yml');
     expect(genDiff(filePath1, filePath2)).toEqual(stylishResult);
-  });
-
-  test('stylish formatter', () => {
     expect(genDiff(filePath1, filePath2, 'stylish')).toEqual(stylishResult);
-  });
-
-  test('plain formatter', () => {
     expect(genDiff(filePath1, filePath2, 'plain')).toEqual(plainResult);
-  });
-
-  test('json formatter', () => {
-    expect(genDiff(filePath1, filePath2, 'json')).toEqual(jsonResult);
-  });
-});
-
-describe('should be work with json', () => {
-  const filePath1 = getFixturePath('file1.json');
-  const filePath2 = getFixturePath('file2.json');
-
-  test('without formatter', () => {
-    expect(genDiff(filePath1, filePath2)).toEqual(stylishResult);
-  });
-
-  test('stylish formatter', () => {
-    expect(genDiff(filePath1, filePath2, 'stylish')).toEqual(stylishResult);
-  });
-
-  test('plain formatter', () => {
-    expect(genDiff(filePath1, filePath2, 'plain')).toEqual(plainResult);
-  });
-
-  test('json formatter', () => {
     expect(genDiff(filePath1, filePath2, 'json')).toEqual(jsonResult);
   });
 
-  test('json error', () => {
+  it('should be work with json', () => {
+    const filePath1 = getFixturePath('file1.json');
+    const filePath2 = getFixturePath('file2.json');
+
+    expect(genDiff(filePath1, filePath2)).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2, 'stylish')).toEqual(stylishResult);
+    expect(genDiff(filePath1, filePath2, 'plain')).toEqual(plainResult);
+    expect(genDiff(filePath1, filePath2, 'json')).toEqual(jsonResult);
     expect(() => genDiff(getFixturePath('error.json'), filePath1)).toThrow(SyntaxError);
   });
 });
