@@ -41,31 +41,31 @@ const formatPlainObject = (content, depth) => {
 
 const formatDiffEntries = (diffEntries = [], depth = 1) => {
   const resultContent = diffEntries
-    .reduce((result, {
-      label, value, type, isObject, oldValue,
-    }) => {
-      const openingBlock = formatLabel(label, depth, type);
+    .reduce((result, diffEntry) => {
+      const openingBlock = formatLabel(diffEntry.key, depth, diffEntry.type);
 
-      if (type === UPDATED_TYPE) {
+      if (diffEntry.type === UPDATED_TYPE) {
         return result.concat(
-          formatLabel(label, depth, DELETE_TYPE),
-          _.isObject(oldValue) ? formatPlainObject(oldValue, depth + 1) : oldValue,
+          formatLabel(diffEntry.key, depth, DELETE_TYPE),
+          // eslint-disable-next-line max-len
+          _.isObject(diffEntry.value1) ? formatPlainObject(diffEntry.value1, depth + 1) : diffEntry.value1,
           '\n',
-          formatLabel(label, depth, ADD_TYPE),
-          _.isObject(value) ? formatPlainObject(value, depth + 1) : value,
+          formatLabel(diffEntry.key, depth, ADD_TYPE),
+          // eslint-disable-next-line max-len
+          _.isObject(diffEntry.value2) ? formatPlainObject(diffEntry.value2, depth + 1) : diffEntry.value2,
           '\n',
         );
       }
 
       // or modified object (diff entries recursion)
-      if (Array.isArray(value)) {
-        return result.concat(openingBlock, formatDiffEntries(value, depth + 1), '\n');
+      if (diffEntry.children) {
+        return result.concat(openingBlock, formatDiffEntries(diffEntry.children, depth + 1), '\n');
       // or added/removed object (plain object recursion)
       }
-      if (isObject) {
-        return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
+      if (_.isObject(diffEntry.value)) {
+        return result.concat(openingBlock, formatPlainObject(diffEntry.value, depth + 1), '\n');
       }
-      return result.concat(openingBlock, value, '\n');
+      return result.concat(openingBlock, diffEntry.value, '\n');
     }, '');
 
   return [`${openingSymbol}\n`, resultContent, `${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`].join('');

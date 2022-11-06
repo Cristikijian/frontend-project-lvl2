@@ -15,25 +15,23 @@ const formatValue = (value) => {
 };
 
 const plainFormatter = (diffEntries, path = []) => diffEntries
-  .reduce((result, {
-    label, value, type, oldValue,
-  }) => {
-    const currentPath = [...path, label];
+  .reduce((result, diffEntry) => {
+    const currentPath = [...path, diffEntry.key];
 
-    if (Array.isArray(value)) {
-      return result.concat(plainFormatter(value, currentPath));
+    if (diffEntry.children) {
+      return result.concat(plainFormatter(diffEntry.children, currentPath));
     }
 
-    if (type === DELETE_TYPE) {
+    if (diffEntry.type === DELETE_TYPE) {
       return result.concat(`Property '${currentPath.join('.')}' was removed`);
     }
 
-    if (type === ADD_TYPE) {
-      return result.concat(`Property '${currentPath.join('.')}' was added with value: ${formatValue(value)}`);
+    if (diffEntry.type === ADD_TYPE) {
+      return result.concat(`Property '${currentPath.join('.')}' was added with value: ${formatValue(diffEntry.value)}`);
     }
 
-    if (type === UPDATED_TYPE) {
-      return result.concat(`Property '${currentPath.join('.')}' was updated. From ${formatValue(oldValue)} to ${formatValue(value)}`);
+    if (diffEntry.type === UPDATED_TYPE) {
+      return result.concat(`Property '${currentPath.join('.')}' was updated. From ${formatValue(diffEntry.value1)} to ${formatValue(diffEntry.value2)}`);
     }
 
     return result;

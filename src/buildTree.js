@@ -1,47 +1,34 @@
 import _ from 'lodash';
 import {
-  ADD_TYPE, DELETE_TYPE, NONE_TYPE, UPDATED_TYPE,
+  ADD_TYPE, DELETE_TYPE, UNCHANGED_TYPE, UPDATED_TYPE,
 } from './constants.js';
 
-const createDiffEntry = (label, value, type, oldValue) => ({
-  label,
-  value,
-  type,
-  isObject: _.isObject(value),
-  oldValue,
-});
+const buildTree = (data1, data2) => _.uniq([...Object.keys(data1), ...Object.keys(data2)])
+  .sort((a, b) => (a < b ? -1 : 1))
+  .map((key) => {
+    const keyExistsIn1 = _.has(data1, key);
+    const keyExistsIn2 = _.has(data2, key);
 
-const buildTree = (data1, data2) => {
-  const result = _.uniq([...Object.keys(data1), ...Object.keys(data2)])
-    .reduce((changes, key) => {
-      const oldValue = data1[key];
-      const newValue = data2[key];
-      const keyExistsIn1 = Object.hasOwn(data1, key);
-      const keyExistsIn2 = Object.hasOwn(data2, key);
+    if (!keyExistsIn1 && keyExistsIn2) {
+      return { key, value: data2[key], type: ADD_TYPE };
+    }
 
-      if (_.isObject(oldValue) && _.isObject(newValue)) {
-        const objectsDiffResult = buildTree(oldValue, newValue);
-        return [...changes, createDiffEntry(key, objectsDiffResult, NONE_TYPE)];
-      }
+    if (keyExistsIn1 && !keyExistsIn2) {
+      return { key, value: data1[key], type: DELETE_TYPE };
+    }
 
-      if (keyExistsIn1 && !keyExistsIn2) {
-        return [...changes, createDiffEntry(key, oldValue, DELETE_TYPE)];
-      }
+    if (_.isObject(data1[key]) && _.isObject(data2[key])) {
+      const children = buildTree(data1[key], data2[key]);
+      return { key, children };
+    }
 
-      if (!keyExistsIn1 && keyExistsIn2) {
-        return [...changes, createDiffEntry(key, newValue, ADD_TYPE)];
-      }
+    if (data1[key] === data2[key]) {
+      return { key, value: data1[key], type: UNCHANGED_TYPE };
+    }
 
-      if (keyExistsIn1 && keyExistsIn2) {
-        return oldValue === newValue
-          ? [...changes, createDiffEntry(key, oldValue, NONE_TYPE)]
-          : [...changes, createDiffEntry(key, newValue, UPDATED_TYPE, oldValue)];
-      }
-
-      return changes;
-    }, []);
-
-  return _.sortBy(result, (diffEntry) => diffEntry.label);
-};
+    return {
+      key, value1: data1[key], value2: data2[key], type: UPDATED_TYPE,
+    };
+  });
 
 export default buildTree;
