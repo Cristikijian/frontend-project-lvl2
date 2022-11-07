@@ -3,9 +3,9 @@ import {
   ADD_TYPE, DELETE_TYPE, UNCHANGED_TYPE, UPDATED_TYPE,
 } from './constants.js';
 
-const buildTree = (data1, data2) => _.uniq([...Object.keys(data1), ...Object.keys(data2)])
-  .sort((a, b) => (a < b ? -1 : 1))
-  .map((key) => {
+const buildTree = (data1, data2) => {
+  const keys = _.sortBy(_.uniq([...Object.keys(data1), ...Object.keys(data2)]));
+  return keys.map((key) => {
     const keyExistsIn1 = _.has(data1, key);
     const keyExistsIn2 = _.has(data2, key);
 
@@ -30,5 +30,6 @@ const buildTree = (data1, data2) => _.uniq([...Object.keys(data1), ...Object.key
       key, value1: data1[key], value2: data2[key], type: UPDATED_TYPE,
     };
   });
+};
 
 export default buildTree;
