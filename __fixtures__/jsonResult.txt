@@ -47,7 +47,8 @@
                 "value2": "so much",
                 "type": "updated"
               }
-            ]
+            ],
+            "type": "nested"
           },
           {
             "key": "key",
@@ -59,9 +60,11 @@
             "value": "vops",
             "type": "added"
           }
-        ]
+        ],
+        "type": "nested"
       }
-    ]
+    ],
+    "type": "nested"
   },
   {
     "key": "group1",
@@ -85,7 +88,8 @@
         "value2": "str",
         "type": "updated"
       }
-    ]
+    ],
+    "type": "nested"
   },
   {
     "key": "group2",

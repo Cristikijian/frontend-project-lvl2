@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import {
-  ADD_TYPE, DELETE_TYPE, UPDATED_TYPE,
+  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE,
 } from '../constants.js';
 
 const formatValue = (value) => {
@@ -14,19 +14,19 @@ const formatValue = (value) => {
   return value;
 };
 
-const plainFormatter = (diffEntries, path = []) => diffEntries
+const formatPlain = (diffEntries, path = []) => diffEntries
   .reduce((result, diffEntry) => {
     const currentPath = [...path, diffEntry.key];
 
     if (diffEntry.children) {
-      return result.concat(plainFormatter(diffEntry.children, currentPath));
+      return result.concat(formatPlain(diffEntry.children, currentPath));
     }
 
-    if (diffEntry.type === DELETE_TYPE) {
+    if (diffEntry.type === DELETED_TYPE) {
       return result.concat(`Property '${currentPath.join('.')}' was removed`);
     }
 
-    if (diffEntry.type === ADD_TYPE) {
+    if (diffEntry.type === ADDED_TYPE) {
       return result.concat(`Property '${currentPath.join('.')}' was added with value: ${formatValue(diffEntry.value)}`);
     }
 
@@ -38,4 +38,4 @@ const plainFormatter = (diffEntries, path = []) => diffEntries
   }, [])
   .join('\n');
 
-export default plainFormatter;
+export default formatPlain;

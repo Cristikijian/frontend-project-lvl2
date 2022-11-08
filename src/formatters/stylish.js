@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  ADD_TYPE, DELETE_TYPE, UPDATED_TYPE,
+  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE,
 } from '../constants.js';
 
 const SPACE_MULTIPLIER = 4;
@@ -14,9 +14,9 @@ const getIndent = (depth, isClosing) => {
 
 const checkTypeSymbol = (type) => {
   switch (type) {
-    case ADD_TYPE:
+    case ADDED_TYPE:
       return '+';
-    case DELETE_TYPE:
+    case DELETED_TYPE:
       return '-';
     default:
       return ' ';
@@ -39,18 +39,18 @@ const formatPlainObject = (content, depth) => {
   return [`${openingSymbol}\n`, resultContent, `${getIndent(depth, true)}${closingSymbol}`].join('');
 };
 
-const formatDiffEntries = (diffEntries = [], depth = 1) => {
+const formatStylish = (diffEntries = [], depth = 1) => {
   const resultContent = diffEntries
     .reduce((result, diffEntry) => {
       const openingBlock = formatLabel(diffEntry.key, depth, diffEntry.type);
 
       if (diffEntry.type === UPDATED_TYPE) {
         return result.concat(
-          formatLabel(diffEntry.key, depth, DELETE_TYPE),
+          formatLabel(diffEntry.key, depth, DELETED_TYPE),
           // eslint-disable-next-line max-len
           _.isObject(diffEntry.value1) ? formatPlainObject(diffEntry.value1, depth + 1) : diffEntry.value1,
           '\n',
-          formatLabel(diffEntry.key, depth, ADD_TYPE),
+          formatLabel(diffEntry.key, depth, ADDED_TYPE),
           // eslint-disable-next-line max-len
           _.isObject(diffEntry.value2) ? formatPlainObject(diffEntry.value2, depth + 1) : diffEntry.value2,
           '\n',
@@ -59,7 +59,7 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
 
       // or modified object (diff entries recursion)
       if (diffEntry.children) {
-        return result.concat(openingBlock, formatDiffEntries(diffEntry.children, depth + 1), '\n');
+        return result.concat(openingBlock, formatStylish(diffEntry.children, depth + 1), '\n');
       // or added/removed object (plain object recursion)
       }
       if (_.isObject(diffEntry.value)) {
@@ -71,4 +71,4 @@ const formatDiffEntries = (diffEntries = [], depth = 1) => {
   return [`${openingSymbol}\n`, resultContent, `${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`].join('');
 };
 
-export default formatDiffEntries;
+export default formatStylish;

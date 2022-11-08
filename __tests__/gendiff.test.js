@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import { expect, test } from '@jest/globals';
+import { expect } from '@jest/globals';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'url';
