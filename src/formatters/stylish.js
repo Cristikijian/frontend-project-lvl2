@@ -3,12 +3,12 @@ import {
   ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE,
 } from '../constants.js';
 
-const SPACE_MULTIPLIER = 4;
-const openingSymbol = '{';
-const closingSymbol = '}';
+const SPACES_COUNT = 4;
+// const openingSymbol = '{';
+// const closingSymbol = '}';
 
 const getIndent = (depth, isClosing) => {
-  const spaceNumber = SPACE_MULTIPLIER * depth - (isClosing ? 4 : 2);
+  const spaceNumber = SPACES_COUNT * depth - (isClosing ? 4 : 2);
   return ' '.repeat(spaceNumber);
 };
 
@@ -26,49 +26,52 @@ const formatLabel = (label, depth, type = ' ') => `${getIndent(depth)}${checkTyp
 
 const formatPlainObject = (content, depth) => {
   const resultContent = Object.entries(content)
-    .reduce((result, [key, value]) => {
+    .map(([key, value]) => {
       const openingBlock = formatLabel(key, depth);
 
       if (!_.isObject(value)) {
-        return result.concat(openingBlock, value, '\n');
+        return `${openingBlock}${value}\n`;
       }
 
-      return result.concat(openingBlock, formatPlainObject(value, depth + 1), '\n');
-    }, '');
+      return `${openingBlock}${formatPlainObject(value, depth + 1)}\n`;
+    })
+    .join('');
 
-  return [`${openingSymbol}\n`, resultContent, `${getIndent(depth, true)}${closingSymbol}`].join('');
+  return `{\n${resultContent}${getIndent(depth, true)}}`;
 };
 
 const formatStylish = (diffEntries = [], depth = 1) => {
   const resultContent = diffEntries
-    .reduce((result, diffEntry) => {
+    .map((diffEntry) => {
       const openingBlock = formatLabel(diffEntry.key, depth, diffEntry.type);
 
       if (diffEntry.type === UPDATED_TYPE) {
-        return result.concat(
+        return [
           formatLabel(diffEntry.key, depth, DELETED_TYPE),
           // eslint-disable-next-line max-len
-          _.isObject(diffEntry.value1) ? formatPlainObject(diffEntry.value1, depth + 1) : diffEntry.value1,
+          _.isObject(diffEntry.value1) ? formatPlainObject(diffEntry.value1, depth + 1) : `${diffEntry.value1}`,
           '\n',
           formatLabel(diffEntry.key, depth, ADDED_TYPE),
           // eslint-disable-next-line max-len
-          _.isObject(diffEntry.value2) ? formatPlainObject(diffEntry.value2, depth + 1) : diffEntry.value2,
+          _.isObject(diffEntry.value2) ? formatPlainObject(diffEntry.value2, depth + 1) : `${diffEntry.value2}`,
           '\n',
-        );
+        ];
       }
 
       // or modified object (diff entries recursion)
       if (diffEntry.children) {
-        return result.concat(openingBlock, formatStylish(diffEntry.children, depth + 1), '\n');
+        return [openingBlock, formatStylish(diffEntry.children, depth + 1), '\n'];
       // or added/removed object (plain object recursion)
       }
       if (_.isObject(diffEntry.value)) {
-        return result.concat(openingBlock, formatPlainObject(diffEntry.value, depth + 1), '\n');
+        return [openingBlock, formatPlainObject(diffEntry.value, depth + 1), '\n'];
       }
-      return result.concat(openingBlock, diffEntry.value, '\n');
-    }, '');
+      return [openingBlock, `${diffEntry.value}`, '\n'];
+    })
+    .flat()
+    .join('');
 
-  return [`${openingSymbol}\n`, resultContent, `${depth === 1 ? '' : getIndent(depth, true)}${closingSymbol}`].join('');
+  return ['{\n', ...resultContent, `${depth === 1 ? '' : getIndent(depth, true)}}`].join('');
 };
 
 export default formatStylish;
