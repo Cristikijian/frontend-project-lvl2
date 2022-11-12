@@ -1,18 +1,16 @@
 import _ from 'lodash';
 import {
-  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE,
+  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE, NESTED_TYPE,
 } from '../constants.js';
 
 const SPACES_COUNT = 4;
-// const openingSymbol = '{';
-// const closingSymbol = '}';
 
 const getIndent = (depth, isClosing) => {
   const spaceNumber = SPACES_COUNT * depth - (isClosing ? 4 : 2);
   return ' '.repeat(spaceNumber);
 };
 
-const checkTypeSymbol = (type) => {
+const getTypeSymbol = (type) => {
   switch (type) {
     case ADDED_TYPE:
       return '+';
@@ -22,18 +20,19 @@ const checkTypeSymbol = (type) => {
       return ' ';
   }
 };
-const formatLabel = (label, depth, type = ' ') => `${getIndent(depth)}${checkTypeSymbol(type)} ${label}: `;
 
-const formatPlainObject = (content, depth) => {
-  const resultContent = Object.entries(content)
+const stringify = (data, depth) => {
+  if (!_.isObject(data)) {
+    return `${data}`;
+  }
+
+  const resultContent = Object.entries(data)
     .map(([key, value]) => {
-      const openingBlock = formatLabel(key, depth);
-
       if (!_.isObject(value)) {
-        return `${openingBlock}${value}\n`;
+        return `${getIndent(depth)}  ${key}: ${value}\n`;
       }
 
-      return `${openingBlock}${formatPlainObject(value, depth + 1)}\n`;
+      return `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}\n`;
     })
     .join('');
 
@@ -43,30 +42,19 @@ const formatPlainObject = (content, depth) => {
 const formatStylish = (diffEntries = [], depth = 1) => {
   const resultContent = diffEntries
     .map((diffEntry) => {
-      const openingBlock = formatLabel(diffEntry.key, depth, diffEntry.type);
-
-      if (diffEntry.type === UPDATED_TYPE) {
-        return [
-          formatLabel(diffEntry.key, depth, DELETED_TYPE),
-          // eslint-disable-next-line max-len
-          _.isObject(diffEntry.value1) ? formatPlainObject(diffEntry.value1, depth + 1) : `${diffEntry.value1}`,
-          '\n',
-          formatLabel(diffEntry.key, depth, ADDED_TYPE),
-          // eslint-disable-next-line max-len
-          _.isObject(diffEntry.value2) ? formatPlainObject(diffEntry.value2, depth + 1) : `${diffEntry.value2}`,
-          '\n',
-        ];
+      switch (diffEntry.type) {
+        case UPDATED_TYPE: {
+          const deleted = `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value1, depth + 1)}\n`;
+          const added = `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value2, depth + 1)}\n`;
+          return deleted + added;
+        }
+        case NESTED_TYPE: {
+          return `${getIndent(depth)}  ${diffEntry.key}: ${formatStylish(diffEntry.children, depth + 1)}\n`;
+        }
+        default: {
+          return `${getIndent(depth)}${getTypeSymbol(diffEntry.type)} ${diffEntry.key}: ${stringify(diffEntry.value, depth + 1)}\n`;
+        }
       }
-
-      // or modified object (diff entries recursion)
-      if (diffEntry.children) {
-        return [openingBlock, formatStylish(diffEntry.children, depth + 1), '\n'];
-      // or added/removed object (plain object recursion)
-      }
-      if (_.isObject(diffEntry.value)) {
-        return [openingBlock, formatPlainObject(diffEntry.value, depth + 1), '\n'];
-      }
-      return [openingBlock, `${diffEntry.value}`, '\n'];
     })
     .flat()
     .join('');
