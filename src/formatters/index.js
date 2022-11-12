@@ -10,7 +10,7 @@ const format = (output, data) => {
     case 'stylish':
       return formatStylish(data);
     default:
-      throw Error('Unknown format');
+      throw Error(`Unknown format: ${output}`);
   }
 };
 export default format;
