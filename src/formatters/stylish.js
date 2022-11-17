@@ -1,65 +1,61 @@
 import _ from 'lodash';
 import {
-  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE, NESTED_TYPE,
+  ADDED_TYPE, DELETED_TYPE, UPDATED_TYPE, NESTED_TYPE, UNCHANGED_TYPE,
 } from '../constants.js';
 
 const SPACES_COUNT = 4;
 
-const getIndent = (depth, isClosing) => {
-  const spaceNumber = SPACES_COUNT * depth - (isClosing ? 4 : 2);
+const getIndent = (depth) => {
+  if (depth < 1) return '';
+  const spaceNumber = SPACES_COUNT * depth - 2;
   return ' '.repeat(spaceNumber);
-};
-
-const getTypeSymbol = (type) => {
-  switch (type) {
-    case ADDED_TYPE:
-      return '+';
-    case DELETED_TYPE:
-      return '-';
-    default:
-      return ' ';
-  }
 };
 
 const stringify = (data, depth) => {
   if (!_.isObject(data)) {
-    return `${data}`;
+    return String(data);
   }
 
-  const resultContent = Object.entries(data)
-    .map(([key, value]) => {
-      if (!_.isObject(value)) {
-        return `${getIndent(depth)}  ${key}: ${value}\n`;
-      }
-
-      return `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}\n`;
-    })
+  const output = Object.entries(data)
+    .map(([key, value]) => `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}\n`)
     .join('');
 
-  return `{\n${resultContent}${getIndent(depth, true)}}`;
+  return `{\n${output}${getIndent(depth - 1)}  }`;
 };
 
 const formatStylish = (diffEntries = [], depth = 1) => {
   const resultContent = diffEntries
     .map((diffEntry) => {
       switch (diffEntry.type) {
+        case UNCHANGED_TYPE: {
+          return `${getIndent(depth)}  ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
+        }
         case UPDATED_TYPE: {
-          const deleted = `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value1, depth + 1)}\n`;
-          const added = `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value2, depth + 1)}\n`;
+          const deleted = `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value1, depth)}\n`;
+          const added = `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value2, depth)}`;
           return deleted + added;
         }
-        case NESTED_TYPE: {
-          return `${getIndent(depth)}  ${diffEntry.key}: ${formatStylish(diffEntry.children, depth + 1)}\n`;
+        case ADDED_TYPE: {
+          return `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
         }
+
+        case DELETED_TYPE: {
+          return `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
+        }
+
+        case NESTED_TYPE: {
+          return `${getIndent(depth)}  ${diffEntry.key}: ${formatStylish(diffEntry.children, depth + 1)}`;
+        }
+
         default: {
-          return `${getIndent(depth)}${getTypeSymbol(diffEntry.type)} ${diffEntry.key}: ${stringify(diffEntry.value, depth + 1)}\n`;
+          throw new Error((`Unknown type of node: ${diffEntry}`));
         }
       }
     })
     .flat()
-    .join('');
+    .join('\n');
 
-  return ['{\n', ...resultContent, `${depth === 1 ? '' : getIndent(depth, true)}}`].join('');
+  return ['{\n', ...resultContent, depth === 1 ? '' : `${getIndent(depth - 1)}  `].join('');
 };
 
 export default formatStylish;
