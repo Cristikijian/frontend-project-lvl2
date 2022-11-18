@@ -17,45 +17,40 @@ const stringify = (data, depth) => {
   }
 
   const output = Object.entries(data)
-    .map(([key, value]) => `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}\n`)
-    .join('');
+    .map(([key, value]) => `${getIndent(depth + 1)}  ${key}: ${stringify(value, depth + 1)}`);
 
-  return `{\n${output}${getIndent(depth - 1)}  }`;
+  return `{\n${output.join('\n')}\n${getIndent(depth)}  }`;
 };
 
-const formatStylish = (diffEntries = [], depth = 1) => {
-  const resultContent = diffEntries
-    .map((diffEntry) => {
-      switch (diffEntry.type) {
-        case UNCHANGED_TYPE: {
-          return `${getIndent(depth)}  ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
-        }
-        case UPDATED_TYPE: {
-          const deleted = `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value1, depth)}\n`;
-          const added = `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value2, depth)}`;
-          return deleted + added;
-        }
-        case ADDED_TYPE: {
-          return `${getIndent(depth)}+ ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
-        }
+const iter = (nodes = [], depth = 1) => nodes.map((node) => {
+  switch (node.type) {
+    case UNCHANGED_TYPE: {
+      return `${getIndent(depth)}  ${node.key}: ${stringify(node.value, depth)}`;
+    }
+    case UPDATED_TYPE: {
+      const output1 = `${getIndent(depth)}- ${node.key}: ${stringify(node.value1, depth)}`;
+      const output2 = `${getIndent(depth)}+ ${node.key}: ${stringify(node.value2, depth)}`;
+      return `${output1}\n${output2}`;
+    }
+    case ADDED_TYPE: {
+      return `${getIndent(depth)}+ ${node.key}: ${stringify(node.value, depth)}`;
+    }
 
-        case DELETED_TYPE: {
-          return `${getIndent(depth)}- ${diffEntry.key}: ${stringify(diffEntry.value, depth)}`;
-        }
+    case DELETED_TYPE: {
+      return `${getIndent(depth)}- ${node.key}: ${stringify(node.value, depth)}`;
+    }
 
-        case NESTED_TYPE: {
-          return `${getIndent(depth)}  ${diffEntry.key}: ${formatStylish(diffEntry.children, depth + 1)}`;
-        }
+    case NESTED_TYPE: {
+      const output = iter(node.children, depth + 1);
+      return `${getIndent(depth)}  ${node.key}: {\n${output.join('\n')}\n${getIndent(depth)}  }`;
+    }
 
-        default: {
-          throw new Error((`Unknown type of node: ${diffEntry}`));
-        }
-      }
-    })
-    .flat()
-    .join('\n');
+    default: {
+      throw new Error((`Unknown type of node: ${node.type}`));
+    }
+  }
+});
 
-  return ['{\n', ...resultContent, depth === 1 ? '' : `${getIndent(depth - 1)}  `].join('');
-};
+const formatStylish = (tree = [], depth = 1) => `{\n${iter(tree, depth).join('\n')}\n}`;
 
 export default formatStylish;
