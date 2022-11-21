@@ -1,14 +1,14 @@
 import { expect } from '@jest/globals';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-const getFixturePath = (filename) => resolve(__dirname, '..', '__fixtures__', filename);
-const readFixture = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 const stylishResult = readFixture('stylishResult.txt');
 const plainResult = readFixture('plainResult.txt');

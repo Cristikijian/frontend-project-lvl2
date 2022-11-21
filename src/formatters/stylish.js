@@ -7,8 +7,7 @@ const SPACES_COUNT = 4;
 
 const getIndent = (depth) => {
   if (depth < 1) return '';
-  const spaceNumber = SPACES_COUNT * depth - 2;
-  return ' '.repeat(spaceNumber);
+  return ' '.repeat(SPACES_COUNT * depth - 2);
 };
 
 const stringify = (data, depth) => {
